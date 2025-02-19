@@ -5,8 +5,6 @@ namespace AircraftStateCore.Models;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
 public struct PlaneDataStruct
 {
-	[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-	public String title;
 	public double latitude;   //settable
 	public double longitude;  //settable
 	public int altitude;    //settable

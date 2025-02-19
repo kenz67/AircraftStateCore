@@ -4,11 +4,13 @@ namespace AircraftStateCore.Services
 {
 	public interface ISimConnectProxy
 	{
+		private const uint SIMCONNECT_UNUSED = uint.MaxValue;   //SimConnect.SIMCONNECT_UNUSED
+
 		void AddOnRecvEvent(SimConnect.RecvSimobjectDataEventHandler handler);
 		void AddOnRecvException(SimConnect.RecvExceptionEventHandler handler);
 		void AddOnRecvOpen(SimConnect.RecvOpenEventHandler handler);
 		void AddOnRecvQuit(SimConnect.RecvQuitEventHandler handler);
-		void AddToDataDefinition(Enum DefineId, string DatumName, string UnitsName, SIMCONNECT_DATATYPE DatumType, float Epsilon, uint DatumId);
+		void AddToDataDefinition(Enum DefineId, string DatumName, string UnitsName, SIMCONNECT_DATATYPE DatumType, float Epsilon = 0.0f, uint DatumId = SIMCONNECT_UNUSED);
 		bool CloseConnection();
 		bool ConnectToSim(string Name, nint WindowHandle, uint UserEvent, WaitHandle EventHandle, uint ConfigIndex);
 		bool IsConnected();

@@ -35,8 +35,9 @@ public class SimConnectService : ISimConnectService
 		WindowHandle = w.Hwnd;
 		w.WndProcHandle += W_WndProcHandle;
 
+		//will i have problem with 2024?  https://devsupport.flightsimulator.com/t/2020-2024-compatible-microsoft-flightsimulator-simconnect-dll/11844/2
 		_proxy.ConnectToSim("Managed Data Request", WindowHandle, WM_USER_SIMCONNECT, null, 0);
-		SetupEvents();
+		SetupSimConnect();
 	}
 
 	private IntPtr W_WndProcHandle(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -70,7 +71,7 @@ public class SimConnectService : ISimConnectService
 	}
 
 	//todo, real test?, just instantiate svc and this will be called.
-	private void SetupEvents()
+	private void SetupSimConnect()
 	{
 		try
 		{
@@ -79,179 +80,208 @@ public class SimConnectService : ISimConnectService
 			_proxy.AddOnRecvEvent(new SimConnect.RecvSimobjectDataEventHandler(SimConnect_OnRecvSimobjectData));
 			_proxy.AddOnRecvException(new SimConnect.RecvExceptionEventHandler(SimConnect_OnRecvException));
 
-			//Data being captured
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "TITLE", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE LATITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE LONGITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE ALTITUDE", "feet", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE HEADING DEGREES MAGNETIC", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE PITCH DEGREES", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM ACTIVE FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM STANDBY FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM ACTIVE FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM STANDBY FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV ACTIVE FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV STANDBY FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV ACTIVE FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV STANDBY FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ADF ACTIVE FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ADF STANDBY FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV OBS:1", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV OBS:2", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ADF CARD", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK CENTER QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK CENTER2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK CENTER3 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK EXTERNAL1 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK EXTERNAL2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK LEFT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK LEFT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK LEFT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK RIGHT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK RIGHT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK RIGHT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK SELECTOR:1", "enum", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "BRAKE PARKING INDICATOR", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "KOHLSMAN SETTING HG", "inHg", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "AUTOPILOT HEADING LOCK DIR", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FLAPS HANDLE INDEX", "number", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ELEVATOR TRIM POSITION", "radians", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "RUDDER TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "AILERON TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "GYRO DRIFT ERROR", "radians", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "HEADING INDICATOR", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+			SetupReadDataDefinitions();
+			SetupEnvironmentDataDefinitions();
+			SetupWritableDataDefinitions();
+			RegisterDataStructures();
 
-			//key on these to trigger db save. all 3 must be turned on together, then all 3 off together
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ELECTRICAL MASTER BATTERY", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "GENERAL ENG MASTER ALTERNATOR", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "AVIONICS MASTER SWITCH", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ELECTRICAL BATTERY VOLTAGE", "volts", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+			SetupDataRequests();
 
-			//////////////////
-			//Settable Data
-			//////////////////
+			MapEvents();
 
-			//Fuel
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK CENTER QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK CENTER2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK CENTER3 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK EXTERNAL1 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK EXTERNAL2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK LEFT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK LEFT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK LEFT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK RIGHT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK RIGHT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK RIGHT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			//Position
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE LATITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE LONGITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE ALTITUDE", "feet", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE HEADING DEGREES MAGNETIC", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE PITCH DEGREES", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			//Trim
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimTrimData, "ELEVATOR TRIM POSITION", "radians", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimTrimData, "RUDDER TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimTrimData, "AILERON TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			//Capture the name of the plane
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimEnvironmentDataStructure, "Title", null, SIMCONNECT_DATATYPE.STRING256, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			//Power
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPowerData, "ELECTRICAL BATTERY VOLTAGE", "volts", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			//Lights
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT NAV ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT BEACON ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT LANDING ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT TAXI ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT STROBE ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT PANEL ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT RECOGNITION ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT WING ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT CABIN ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT LOGO ON", "bool", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT GLARESHIELD POWER SETTING", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT CABIN POWER SETTING", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT PEDESTRAL POWER SETTING", "percent", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT POTENTIOMETER:3", "percent over 100", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "TRANSPONDER CODE:1", "Bco16", SIMCONNECT_DATATYPE.INT32, 0.0f, SimConnect.SIMCONNECT_UNUSED);
-
-			//Register the data structures being used
-			_proxy.RegisterDataDefineStruct<PlaneDataStruct>(DATA_DEFINITIONS.SimPlaneDataStructure);
-			_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimEnvironmentDataStructure);
-			_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimPlaneFuelData);
-			_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimPlaneLocationData);
-			_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimFlapsData);
-			_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimLightData);
-			_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimPowerData);
-
-			//Request data from sim
-			_proxy.RequestDataOnSimObject(DATA_REQUESTS_TYPES.DataRequest, DATA_DEFINITIONS.SimPlaneDataStructure, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SECOND, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0, 0, 0);
-			_proxy.RequestDataOnSimObject(DATA_REQUESTS_TYPES.SimEnvironmentReq, DATA_DEFINITIONS.SimEnvironmentDataStructure, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SECOND, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0, 0, 0);
-
-			//Map Events
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.COM_RADIO_SET_HZ, "COM_RADIO_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.COM_STBY_RADIO_SET_HZ, "COM_STBY_RADIO_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.COM2_RADIO_SET_HZ, "COM2_RADIO_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.COM2_STBY_RADIO_SET_HZ, "COM2_STBY_RADIO_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV1_RADIO_SET_HZ, "NAV1_RADIO_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV1_STBY_SET_HZ, "NAV1_STBY_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV2_RADIO_SET_HZ, "NAV2_RADIO_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV2_STBY_SET_HZ, "NAV2_STBY_SET_HZ");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF1_RADIO_SWAP, "ADF1_RADIO_SWAP");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF_SET, "ADF_COMPLETE_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF_STBY_SET, "ADF_STBY_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.OBS1, "VOR1_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.OBS2, "VOR2_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF_CARD_SET, "ADF_CARD_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FUEL_SELECTOR_SET, "FUEL_SELECTOR_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.PARKING_BRAKE_SET, "PARKING_BRAKE_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.HEADING_BUG_SET, "HEADING_BUG_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.KOHLSMAN_SET, "KOHLSMAN_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_UP, "FLAPS_UP");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_1, "FLAPS_1");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_2, "FLAPS_2");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_3, "FLAPS_3");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_4, "FLAPS_4");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_DOWN, "FLAPS_DOWN");
-
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1000INC, "XPNDR_1000_INC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER100INC, "XPNDR_100_INC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER10INC, "XPNDR_10_INC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1INC, "XPNDR_1_INC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1000DEC, "XPNDR_1000_DEC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER100DEC, "XPNDR_100_DEC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER10DEC, "XPNDR_10_DEC");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1DEC, "XPNDR_1_DEC");
-
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV_LIGHT, "TOGGLE_NAV_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.BEACON_LIGHT, "TOGGLE_BEACON_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.LANDING_LIGHT, "LANDING_LIGHTS_TOGGLE");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.TAXI_LIGHT, "TOGGLE_TAXI_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.STROBE_LIGHT, "STROBES_TOGGLE");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.PANEL_LIGHT, "PANEL_LIGHTS_TOGGLE");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.RECOGNITION_LIGHT, "TOGGLE_RECOGNITION_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.WING_LIGHT, "TOGGLE_WING_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.CABIN_LIGHT, "TOGGLE_CABIN_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.LOGO_LIGHT, "TOGGLE_LOGO_LIGHTS");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.GLARESHIELD_LIGHTPOWER, "GLARESHIELD_LIGHTS_POWER_SETTING_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.PANEL_LIGHTS_POWER_SETTING_SET, "LIGHT_POTENTIOMETER_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.CABIN_LIGHTPOWER, "CABIN_LIGHTS_POWER_SETTING_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.PEDESTRAL_LIGHT_POWER, "PEDESTRAL_LIGHTS_POWER_SETTING_SET");
-
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.ELECTRICAL_BATTERY_BUS_VOLTAGE, "ELECTRICAL_BATTERY_BUS_VOLTAGE");
-			//sim.SubscribeToSystemEvent(MY_SIMCONENCT_EVENT_IDS.Pause, "Pause");
-
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.HEADING_GYRO_SET, "HEADING_GYRO_SET");
-			_proxy.MapClientEventToSimEvent(EVENT_IDS.GYRO_DRIFT_SET, "GYRO_DRIFT_SET");
 		}
 		catch /* (COMException ex) */
 		{
 		}
+	}
+
+	private void SetupReadDataDefinitions()
+	{
+		//Data being captured
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE LATITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE LONGITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE ALTITUDE", "feet", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE HEADING DEGREES MAGNETIC", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "PLANE PITCH DEGREES", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM ACTIVE FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM STANDBY FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM ACTIVE FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "COM STANDBY FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV ACTIVE FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV STANDBY FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV ACTIVE FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV STANDBY FREQUENCY:2", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ADF ACTIVE FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ADF STANDBY FREQUENCY:1", "Mhz", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV OBS:1", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "NAV OBS:2", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ADF CARD", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK CENTER QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK CENTER2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK CENTER3 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK EXTERNAL1 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK EXTERNAL2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK LEFT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK LEFT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK LEFT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK RIGHT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK RIGHT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK RIGHT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FUEL TANK SELECTOR:1", "enum", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "BRAKE PARKING INDICATOR", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "KOHLSMAN SETTING HG", "inHg", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "AUTOPILOT HEADING LOCK DIR", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "FLAPS HANDLE INDEX", "number", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ELEVATOR TRIM POSITION", "radians", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "RUDDER TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "AILERON TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "GYRO DRIFT ERROR", "radians", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "HEADING INDICATOR", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+
+		//key on these to trigger db save. all 3 must be turned on together, then all 3 off together
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ELECTRICAL MASTER BATTERY", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "GENERAL ENG MASTER ALTERNATOR", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "AVIONICS MASTER SWITCH", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "ELECTRICAL BATTERY VOLTAGE", "volts", SIMCONNECT_DATATYPE.FLOAT64);
+
+		//Lights
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT NAV ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT BEACON ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT LANDING ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT TAXI ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT STROBE ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT PANEL ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT RECOGNITION ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT WING ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT CABIN ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT LOGO ON", "bool", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT GLARESHIELD POWER SETTING", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT CABIN POWER SETTING", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT PEDESTRAL POWER SETTING", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "LIGHT POTENTIOMETER:3", "percent over 100", SIMCONNECT_DATATYPE.FLOAT64);
+
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneDataStructure, "TRANSPONDER CODE:1", "Bco16", SIMCONNECT_DATATYPE.INT32);
+	}
+
+	private void SetupEnvironmentDataDefinitions()
+	{
+		//Capture the name of the plane
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimEnvironmentDataStructure, "Title", null, SIMCONNECT_DATATYPE.STRING256);
+	}
+
+	private void SetupDataRequests()
+	{
+		//Request data from sim
+		_proxy.RequestDataOnSimObject(DATA_REQUESTS_TYPES.DataRequest, DATA_DEFINITIONS.SimPlaneDataStructure, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SECOND, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0, 0, 0);
+		_proxy.RequestDataOnSimObject(DATA_REQUESTS_TYPES.SimEnvironmentReq, DATA_DEFINITIONS.SimEnvironmentDataStructure, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SECOND, SIMCONNECT_DATA_REQUEST_FLAG.DEFAULT, 0, 0, 0);
+
+	}
+
+	private void SetupWritableDataDefinitions()
+	{
+		//////////////////
+		//Settable Data
+		//////////////////
+
+		//Fuel
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK CENTER QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK CENTER2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK CENTER3 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK EXTERNAL1 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK EXTERNAL2 QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK LEFT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK LEFT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK LEFT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK RIGHT AUX QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK RIGHT MAIN QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneFuelData, "FUEL TANK RIGHT TIP QUANTITY", "gallons", SIMCONNECT_DATATYPE.FLOAT64);
+
+		//Position
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE LATITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE LONGITUDE", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE ALTITUDE", "feet", SIMCONNECT_DATATYPE.INT32);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE HEADING DEGREES MAGNETIC", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPlaneLocationData, "PLANE PITCH DEGREES", "degrees", SIMCONNECT_DATATYPE.FLOAT64);
+
+		//Trim
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimTrimData, "ELEVATOR TRIM POSITION", "radians", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimTrimData, "RUDDER TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimTrimData, "AILERON TRIM PCT", "percent", SIMCONNECT_DATATYPE.FLOAT64);
+
+		//Power
+		_proxy.AddToDataDefinition(DATA_DEFINITIONS.SimPowerData, "ELECTRICAL BATTERY VOLTAGE", "volts", SIMCONNECT_DATATYPE.FLOAT64);
+	}
+
+	private void RegisterDataStructures()
+	{
+		//Register the data structures being used
+		_proxy.RegisterDataDefineStruct<PlaneDataStruct>(DATA_DEFINITIONS.SimPlaneDataStructure);
+		_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimEnvironmentDataStructure);
+		_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimPlaneFuelData);
+		_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimPlaneLocationData);
+		_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimFlapsData);
+		_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimLightData);
+		_proxy.RegisterDataDefineStruct<MasterData>(DATA_DEFINITIONS.SimPowerData);
+	}
+
+	private void MapEvents()
+	{
+		//Map Events
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.COM_RADIO_SET_HZ, "COM_RADIO_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.COM_STBY_RADIO_SET_HZ, "COM_STBY_RADIO_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.COM2_RADIO_SET_HZ, "COM2_RADIO_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.COM2_STBY_RADIO_SET_HZ, "COM2_STBY_RADIO_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV1_RADIO_SET_HZ, "NAV1_RADIO_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV1_STBY_SET_HZ, "NAV1_STBY_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV2_RADIO_SET_HZ, "NAV2_RADIO_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV2_STBY_SET_HZ, "NAV2_STBY_SET_HZ");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF1_RADIO_SWAP, "ADF1_RADIO_SWAP");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF_SET, "ADF_COMPLETE_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF_STBY_SET, "ADF_STBY_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.OBS1, "VOR1_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.OBS2, "VOR2_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.ADF_CARD_SET, "ADF_CARD_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FUEL_SELECTOR_SET, "FUEL_SELECTOR_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.PARKING_BRAKE_SET, "PARKING_BRAKE_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.HEADING_BUG_SET, "HEADING_BUG_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.KOHLSMAN_SET, "KOHLSMAN_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_UP, "FLAPS_UP");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_1, "FLAPS_1");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_2, "FLAPS_2");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_3, "FLAPS_3");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_4, "FLAPS_4");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.FLAPS_DOWN, "FLAPS_DOWN");
+
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1000INC, "XPNDR_1000_INC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER100INC, "XPNDR_100_INC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER10INC, "XPNDR_10_INC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1INC, "XPNDR_1_INC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1000DEC, "XPNDR_1000_DEC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER100DEC, "XPNDR_100_DEC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER10DEC, "XPNDR_10_DEC");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TRANSPONDER1DEC, "XPNDR_1_DEC");
+
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.NAV_LIGHT, "TOGGLE_NAV_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.BEACON_LIGHT, "TOGGLE_BEACON_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.LANDING_LIGHT, "LANDING_LIGHTS_TOGGLE");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.TAXI_LIGHT, "TOGGLE_TAXI_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.STROBE_LIGHT, "STROBES_TOGGLE");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.PANEL_LIGHT, "PANEL_LIGHTS_TOGGLE");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.RECOGNITION_LIGHT, "TOGGLE_RECOGNITION_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.WING_LIGHT, "TOGGLE_WING_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.CABIN_LIGHT, "TOGGLE_CABIN_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.LOGO_LIGHT, "TOGGLE_LOGO_LIGHTS");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.GLARESHIELD_LIGHTPOWER, "GLARESHIELD_LIGHTS_POWER_SETTING_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.PANEL_LIGHTS_POWER_SETTING_SET, "LIGHT_POTENTIOMETER_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.CABIN_LIGHTPOWER, "CABIN_LIGHTS_POWER_SETTING_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.PEDESTRAL_LIGHT_POWER, "PEDESTRAL_LIGHTS_POWER_SETTING_SET");
+
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.ELECTRICAL_BATTERY_BUS_VOLTAGE, "ELECTRICAL_BATTERY_BUS_VOLTAGE");
+		//sim.SubscribeToSystemEvent(MY_SIMCONENCT_EVENT_IDS.Pause, "Pause");
+
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.HEADING_GYRO_SET, "HEADING_GYRO_SET");
+		_proxy.MapClientEventToSimEvent(EVENT_IDS.GYRO_DRIFT_SET, "GYRO_DRIFT_SET");
+
 	}
 
 	public void NoProfile()
@@ -643,7 +673,7 @@ public class SimConnectService : ISimConnectService
 			{
 				return false;
 			}
-			SetupEvents();
+			SetupSimConnect();
 
 			if (Reconnect)
 			{
